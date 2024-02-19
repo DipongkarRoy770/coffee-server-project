@@ -35,12 +35,39 @@ async function run() {
             res.send(result)
         })
 
+        app.get('/coffee/:id', async (req, res) => {
+            const id = req.params.id;
+            const options = { _id: new ObjectId(id) }
+            const result = await coffeeConection.findOne(options)
+            res.send(result)
+        })
+
         app.post('/coffee', async (req, res) => {
             const coffee = req.body;
             const result = await coffeeConection.insertOne(coffee)
             res.send(result)
 
         })
+        app.put('/coffee/:id', async (req, res) => {
+            const id = req.params.id
+            const user = req.body;
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            const updateCofee = {
+                $set: {
+                    name: user.name,
+                    chef: user.chef,
+                    supplier: user.supplier,
+                    tests: user.tests,
+                    category: user.category,
+                    details: user.details,
+                    photoUrl: user.photoUrl
+                }
+            }
+            const result = await coffeeConection.updateOne(filter, updateCofee, options);
+            res.send(result)
+        })
+
         app.delete('/coffee/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
